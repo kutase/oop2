@@ -1,6 +1,8 @@
-﻿package gui;
+package gui;
 
 import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -22,4 +24,5 @@ public class RobotsProgram
         frame.setVisible(true);
         frame.setExtendedState(Frame.MAXIMIZED_BOTH);
       });
-    }}
+    }
+}
