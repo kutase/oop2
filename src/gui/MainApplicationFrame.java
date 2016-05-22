@@ -20,8 +20,6 @@ public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
 
-//    private HashMap<String, HashMap<String, Integer>> windowsState;
-
     private GameWindowState gameWindowState = new GameWindowState();
     
     public MainApplicationFrame() {
@@ -34,10 +32,6 @@ public class MainApplicationFrame extends JFrame
             screenSize.height - inset*2);
 
         setContentPane(desktopPane);
-
-//        createWindowByType("log", new int[] {10, 10, 212, 525});
-//
-//        createWindowByType("game", new int[] {400, 400, 500, 500});
 
         gameWindowState.restoreWindowsState();
 
@@ -92,9 +86,38 @@ public class MainApplicationFrame extends JFrame
         gameWindow.setLocation(locationX, locationY);
         gameWindow.setSize(sizeX, sizeY);
 
+        GameCoords coordsView = createCoordsWindow(new int[] {400, 400, 210, 100});
+        desktopPane.add(coordsView);
+        coordsView.setVisible(true);
+
+        gameWindow.robot.subscribe(new Observer() {
+            @Override
+            public void update(double x, double y) {
+//                System.out.println(Double.toString(x) + " x " + Double.toString(y));
+                coordsView.updateCoordsContent(Double.toString(GameMath.round(x)), Double.toString(GameMath.round(y)));
+            }
+        });
+
         gameWindow.setName("game");
 
         return gameWindow;
+    }
+
+    protected GameCoords createCoordsWindow(int[] params)
+    {
+        int locationX = params[0];
+        int locationY = params[1];
+
+        int sizeX = params[2];
+        int sizeY = params[3];
+
+        GameCoords coordsWindow = new GameCoords();
+        coordsWindow.setLocation(locationX, locationY);
+        coordsWindow.setSize(sizeX, sizeY);
+
+        coordsWindow.setName("coords");
+
+        return coordsWindow;
     }
 
     protected void createWindowByType(String type, int[] params) {
@@ -104,6 +127,9 @@ public class MainApplicationFrame extends JFrame
                 break;
             case "game":
                 addWindow(createGameWindow(params));
+                break;
+            case "coords":
+                addWindow(createCoordsWindow(params));
                 break;
         }
     }
@@ -163,13 +189,17 @@ public class MainApplicationFrame extends JFrame
                 "Добавление новых окон");
 
         addSubMenu(addWindowMenu, "Игровое поле", KeyEvent.VK_S, (event) -> {
-            createWindowByType("game", new int[] {10, 10, 212, 525});
+            createWindowByType("game", new int[] {400, 400, 500, 500});
         });
 
         addSubMenu(addWindowMenu, "Протокол работы", KeyEvent.VK_S, (event) -> {
             createWindowByType("log", new int[] {400, 400, 500, 500});
         });
-        
+
+//        addSubMenu(addWindowMenu, "Координаты", KeyEvent.VK_S, (event) -> {
+//            createWindowByType("coords", new int[] {100, 100, 100, 100});
+//        });
+
         JMenuItem exitItem = new JMenuItem("Выход", KeyEvent.VK_X | KeyEvent.VK_ALT);
         exitItem.addActionListener((event) -> {
             actionOnExit();
@@ -200,7 +230,6 @@ public class MainApplicationFrame extends JFrame
     private void actionOnExit () {
         Object[] options = {"Да", "Нет"};
         int output = JOptionPane.showOptionDialog(this, "Вы уверены?", "Выход", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-//        int output = JOptionPane.showConfirmDialog(this, "Вы уверены?", "Выход", JOptionPane.YES_OPTION);
         if (output == JOptionPane.YES_OPTION) {
             gameWindowState.saveWindowsState();
             Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(

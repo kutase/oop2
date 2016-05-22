@@ -58,7 +58,7 @@ public class GameWindowState implements WindowState {
                 }
 
                 // check if file not blank
-                if (lines.get(0) != null && lines.size()/5 != 0) {
+                if (lines.size() > 0 && lines.get(0) != null && !Objects.equals(lines.get(0), "e") && lines.size()/5 != 0) {
                     int lineStart = 0;
                     for (int i = 0; i < lines.size()/5; i++) {
                         System.out.println(">>>>>>>>>>>>>>>>>>>>");
